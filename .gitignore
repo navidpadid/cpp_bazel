@@ -1,0 +1,23 @@
+# Bazel build outputs
+bazel-*
+MODULES.bazel.lock
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+.Trash-*
+
+# Test outputs
+test_results/
+*.log
+
+# Temporary files
+*.tmp
+*.temp

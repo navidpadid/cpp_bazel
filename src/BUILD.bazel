@@ -1,0 +1,50 @@
+cc_library(
+    name = "common_lib",
+    hdrs = [
+        "days.h",
+    ],
+)
+
+cc_library(
+    name = "employee_lib",
+    srcs = ["employee.cpp"],
+    hdrs = [
+        "employee.h",
+    ],
+)
+
+cc_library(
+    name = "building_lib",
+    srcs = ["building.cpp"],
+    hdrs = [
+        "building.h",
+    ],
+)
+
+cc_library(
+    name = "scheduler_lib",
+    srcs = ["scheduler.cpp"],
+    hdrs = [
+        "scheduler.h",
+    ],
+    deps = [
+        ":common_lib",
+        ":building_lib",
+        ":employee_lib",
+    ],
+)
+
+cc_binary(
+    name = "scheduler_main",
+    srcs = ["main.cpp"],
+    deps = [":scheduler_lib"],
+)
+
+cc_test(
+    name = "scheduler_test",
+    srcs = ["scheduler_test.cpp"],
+    deps = [
+        ":scheduler_lib",
+        "@googletest//:gtest_main",
+    ],
+)

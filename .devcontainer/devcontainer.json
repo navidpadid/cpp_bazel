@@ -1,0 +1,25 @@
+{
+  "name": "cpp-bazel-devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/cpp_bazel",
+  "remoteUser": "ubuntu",
+  "remoteEnv": {
+    "HOME": "/home/ubuntu"
+  },
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached"
+  ],
+  "features": {},
+  "postCreateCommand": "bash -lc 'bazel version || true'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "bazelbuild.vscode-bazel"
+      ]
+    }
+  }
+}
