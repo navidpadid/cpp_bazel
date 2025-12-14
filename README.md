@@ -1,34 +1,81 @@
-# Schedule dynamic employees for some buildings for the upcoming week
+# Employee Scheduler
 
 [![CI](https://img.shields.io/github/actions/workflow/status/navidpadid/cpp_bazel/ci.yml?branch=main&style=for-the-badge&logo=github&logoColor=white&label=Build)](https://github.com/navidpadid/cpp_bazel/actions/workflows/ci.yml)
 [![Last Commit](https://img.shields.io/github/last-commit/navidpadid/cpp_bazel?style=for-the-badge&logo=git&logoColor=white)](https://github.com/navidpadid/cpp_bazel/commits/main)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/navidpadid/cpp_bazel?style=for-the-badge&logo=github)](https://github.com/navidpadid/cpp_bazel/graphs/commit-activity)
 
+> A C++23 application for dynamically scheduling employees across multiple buildings for the work week.
 
+## 📋 Overview
 
-## Running the code and the output
-Pre-requisite and tested machine:
-- Linux (ubuntu based, should be fine on any OS supporting devcontainers)
-- Docker installed
-- Internet connection
+This project implements an intelligent employee scheduling system that assigns workers to buildings based on various constraints and requirements. Built with modern C++23 and Bazel, it demonstrates object-oriented design, testing best practices, and CI/CD integration.
 
+## ✨ Features
 
-## To run the code:
-First open in devcontainer, thwhat en run:
-```bash
-bazel build //...
-bazel test //... 
+- **Dynamic Scheduling**: Automatically assigns employees to buildings across a 5-day work week
+- **Multiple Building Types**: Support for single-story, two-story, and commercial buildings
+- **Flexible Employee Management**: Handle varying employee counts and availability
+- **Comprehensive Testing**: Full test coverage with Google Test framework
+- **Modern C++23**: Leverages latest C++ features including `constexpr`, `inline` variables, and enum classes
+
+## 🏗️ Project Structure
+
+```
+src/
+├── building.h/cpp       # Building class and types
+├── employee.h/cpp       # Employee management
+├── scheduler.h/cpp      # Core scheduling logic
+├── days.h              # Day-of-week utilities and constants
+├── main.cpp            # Application entry point
+└── scheduler_test.cpp  # Comprehensive unit tests
 ```
 
-## To generate code coverage report:
-Run the coverage command and generate HTML report:
+## 🚀 Prerequisites
+
+- **Linux** (Ubuntu-based recommended, works on any OS supporting dev containers)
+- **Docker** installed and running
+- **Internet connection** for initial setup
+
+## 🛠️ Building and Running
+
+### Setup
+
+1. Open the project in a dev container (VS Code will prompt automatically)
+2. Wait for the container to build and initialize
+
+### Build the Project
+
 ```bash
+bazel build //...
+```
+
+### Run Tests
+
+```bash
+bazel test //...
+```
+
+### Run the Application
+
+```bash
+bazel run //src:scheduler_main
+```
+
+## 📊 Code Coverage
+
+Generate a detailed code coverage report:
+
+```bash
+# Run coverage analysis
 bazel coverage --combined_report=lcov //...
+
+# Generate HTML report
 genhtml bazel-out/_coverage/_coverage_report.dat --output-directory coverage_html
 ```
 
-Then open `coverage_html/index.html` in a browser to view the detailed coverage report.
+Open `coverage_html/index.html` in your browser to view the interactive coverage report.
 
-## Sample test output
+## 🧪 Sample Test Output
 
 ```bash
 [       OK ] SchedulerTest.lessThanWorkDayBuildings (0 ms)
