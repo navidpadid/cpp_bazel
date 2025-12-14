@@ -1,6 +1,6 @@
 # Bazel build outputs
 bazel-*
-MODULES.bazel.lock
+MODULE.bazel.lock
 
 # IDE and Editor files
 .vscode/
