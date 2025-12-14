@@ -51,7 +51,20 @@ TEST_F(SchedulerTest, randomSchedule) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify that all buildings were scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(5, totalScheduledBuildings);
+    // Verify that each scheduled building has at least one employee
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 TEST_F(SchedulerTest, noEmployeeNoBuilding) {
@@ -65,7 +78,14 @@ TEST_F(SchedulerTest, noEmployeeNoBuilding) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify schedule is empty (no buildings, no employees)
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(0, totalScheduledBuildings);
 }
 
 TEST_F(SchedulerTest, noEmployee) {
@@ -89,7 +109,14 @@ TEST_F(SchedulerTest, noEmployee) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify no buildings were scheduled (no employees available)
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(0, totalScheduledBuildings);
 }
 
 TEST_F(SchedulerTest, noBuilding) {
@@ -116,7 +143,14 @@ TEST_F(SchedulerTest, noBuilding) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify schedule is empty (no buildings to schedule)
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(0, totalScheduledBuildings);
 }
 
 
@@ -153,7 +187,20 @@ TEST_F(SchedulerTest, allDaysEmpsAvailable) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify that all buildings were scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(5, totalScheduledBuildings);
+    // Verify that each scheduled building has employees assigned
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 
@@ -189,7 +236,20 @@ TEST_F(SchedulerTest, OneTypeEmp_CERTIFIED_INSTALLER) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // With only certified installers, only single-story buildings can be scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_GT(totalScheduledBuildings, 0);
+    // Verify employees are assigned
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 
@@ -221,7 +281,21 @@ TEST_F(SchedulerTest, lessThanWorkDayBuildings) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Verify that buildings were scheduled (with limited employee availability, not all may be scheduled)
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_GT(totalScheduledBuildings, 0);
+    EXPECT_LE(totalScheduledBuildings, 3);
+    // Verify employees are assigned to each building
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 TEST_F(SchedulerTest, buildingsMoreThanCanHandle) {
@@ -273,7 +347,22 @@ TEST_F(SchedulerTest, buildingsMoreThanCanHandle) {
     
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // With many buildings and limited employees, some should be scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_GT(totalScheduledBuildings, 0);
+    // Not all buildings can be scheduled (24 buildings, limited employees)
+    EXPECT_LT(totalScheduledBuildings, 24);
+    // Verify employees are assigned
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 TEST_F(SchedulerTest, randomSchedulerUpdateAvail) {
@@ -309,7 +398,20 @@ TEST_F(SchedulerTest, randomSchedulerUpdateAvail) {
     scheduler.updateAvailability(8, {false, false, false, false, false});
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // Some buildings should still be scheduled after removing one employee
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_GT(totalScheduledBuildings, 0);
+    // Verify employee 8 is not in any schedule
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_EQ(std::find(employees.begin(), employees.end(), 8), employees.end());
+        }
+    }
 }
 
 
@@ -347,7 +449,20 @@ TEST_F(SchedulerTest, randomSchedulerUpdateAvailAndRevertUpdate) {
     scheduler.updateAvailability(8, {true, true, true, true, true});
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // All buildings should be scheduled with employee 8 reverted to available
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(5, totalScheduledBuildings);
+    // Verify employees are assigned
+    for (int day = 0; day < 5; day++) {
+        for (const auto& [building, employees] : schedule[day]) {
+            EXPECT_GT(employees.size(), 0);
+        }
+    }
 }
 
 TEST_F(SchedulerTest, randomSchedulerStrike) {
@@ -392,7 +507,14 @@ TEST_F(SchedulerTest, randomSchedulerStrike) {
     scheduler.updateAvailability(10, {false, false, false, false, false});
     scheduler.schedule();
     scheduler.printSchedule();
-    EXPECT_EQ(1, 1);
+    
+    auto schedule = scheduler.getSchedule();
+    // With all employees unavailable, no buildings should be scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(0, totalScheduledBuildings);
 }
 
 

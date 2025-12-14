@@ -127,6 +127,10 @@ void Scheduler::printSchedule() const {
     cout << "*************************************" << endl;
 }
 
+const Scheduler::__DailySchedule_Type& Scheduler::getSchedule() const {
+    return __daily_schedule;
+}
+
 void Scheduler::updateAvailability(const int& employeeId, const std::vector<bool>& newAvailability) {
     for (DayOfWeek day = DayOfWeek::MONDAY; static_cast<int>(day) < WORK_DAYS; ++day) {
         int int_day = static_cast<int>(day);

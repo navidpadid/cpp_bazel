@@ -21,6 +21,7 @@ class Scheduler {
         void schedule();
         void printSchedule() const; //a function to get the schedule for the unit tests is needed,
                                     // but for now just using the print and manual inspection
+        const std::array<std::vector<std::pair<std::string, std::vector<int>>>, WORK_DAYS>& getSchedule() const;
         void updateAvailability(const int& employeeId, const std::vector<bool>& newAvailability);
         void addEmployee(const int& employeeId, const EmployeeType& empType, const std::vector<bool>& empAvailability);
         void addBuilding(const std::string& buildName, const BuildingType& buildType);
