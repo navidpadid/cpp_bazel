@@ -12,7 +12,7 @@ enum class DayOfWeek {
     FRIDAY
 }; //could use WORK_DAYS at the end of the DayOfWeek as well
 
-const std::unordered_map<DayOfWeek, std::string> dayToStr  = {
+inline const std::unordered_map<DayOfWeek, std::string> dayToStr  = {
     {DayOfWeek::MONDAY, "Monday"},
     {DayOfWeek::TUESDAY, "Tuesday"},
     {DayOfWeek::WEDNESDAY, "Wednesday"},
