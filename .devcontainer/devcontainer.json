@@ -18,7 +18,8 @@
     "vscode": {
       "extensions": [
         "ms-vscode.cpptools",
-        "bazelbuild.vscode-bazel"
+        "bazelbuild.vscode-bazel",
+        "ms-vscode.live-server"
       ]
     }
   }

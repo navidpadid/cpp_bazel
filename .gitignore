@@ -18,6 +18,12 @@ Thumbs.db
 test_results/
 *.log
 
+# Coverage reports
+coverage_html/
+*.gcov
+*.gcda
+*.gcno
+
 # Temporary files
 *.tmp
 *.temp

@@ -12,10 +12,18 @@ Pre-requisite and tested machine:
 ## To run the code:
 First open in devcontainer, then run:
 ```bash
-cd impl
 bazel build //...
 bazel test //... 
 ```
+
+## To generate code coverage report:
+Run the coverage command and generate HTML report:
+```bash
+bazel coverage --combined_report=lcov //...
+genhtml bazel-out/_coverage/_coverage_report.dat --output-directory coverage_html
+```
+
+Then open `coverage_html/index.html` in a browser to view the detailed coverage report.
 
 ## Sample test output
 
