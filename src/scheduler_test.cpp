@@ -53,18 +53,35 @@ TEST_F(SchedulerTest, randomSchedule) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // Verify that all buildings were scheduled
+    // Verify exact schedule: Monday should have 2 buildings
+    EXPECT_EQ(2, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({2, 8}), schedule[0][0].second);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({1, 7}), schedule[0][1].second);
+    
+    // Tuesday should have 2 buildings
+    EXPECT_EQ(2, schedule[1].size());
+    EXPECT_EQ("Build 1", schedule[1][0].first);
+    EXPECT_EQ(std::vector<int>({6, 2, 10, 3, 8, 7, 5, 4}), schedule[1][0].second);
+    EXPECT_EQ("Build 3", schedule[1][1].first);
+    EXPECT_EQ(std::vector<int>({1}), schedule[1][1].second);
+    
+    // Wednesday should have 1 building
+    EXPECT_EQ(1, schedule[2].size());
+    EXPECT_EQ("Build 4", schedule[2][0].first);
+    EXPECT_EQ(std::vector<int>({6}), schedule[2][0].second);
+    
+    // Thursday and Friday should be empty
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
+    // Total: 5 buildings scheduled
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
     EXPECT_EQ(5, totalScheduledBuildings);
-    // Verify that each scheduled building has at least one employee
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
 }
 
 TEST_F(SchedulerTest, noEmployeeNoBuilding) {
@@ -189,18 +206,33 @@ TEST_F(SchedulerTest, allDaysEmpsAvailable) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // Verify that all buildings were scheduled
+    // Verify exact schedule: Monday should have 3 buildings
+    EXPECT_EQ(3, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({6, 10}), schedule[0][0].second);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({2, 7}), schedule[0][1].second);
+    EXPECT_EQ("Build 3", schedule[0][2].first);
+    EXPECT_EQ(std::vector<int>({1}), schedule[0][2].second);
+    
+    // Tuesday should have 2 buildings
+    EXPECT_EQ(2, schedule[1].size());
+    EXPECT_EQ("Build 1", schedule[1][0].first);
+    EXPECT_EQ(std::vector<int>({6, 2, 9, 8, 10, 7, 5, 4}), schedule[1][0].second);
+    EXPECT_EQ("Build 4", schedule[1][1].first);
+    EXPECT_EQ(std::vector<int>({1}), schedule[1][1].second);
+    
+    // Wednesday, Thursday, Friday should be empty
+    EXPECT_EQ(0, schedule[2].size());
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
+    // Total: 5 buildings scheduled
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
     EXPECT_EQ(5, totalScheduledBuildings);
-    // Verify that each scheduled building has employees assigned
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
 }
 
 
@@ -239,17 +271,25 @@ TEST_F(SchedulerTest, OneTypeEmp_CERTIFIED_INSTALLER) {
     
     auto schedule = scheduler.getSchedule();
     // With only certified installers, only single-story buildings can be scheduled
+    // Monday should have 2 single-story buildings
+    EXPECT_EQ(2, schedule[0].size());
+    EXPECT_EQ("Build 3", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({10}), schedule[0][0].second);
+    EXPECT_EQ("Build 4", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({9}), schedule[0][1].second);
+    
+    // Other days should be empty (no other building types can be built with only certified installers)
+    EXPECT_EQ(0, schedule[1].size());
+    EXPECT_EQ(0, schedule[2].size());
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
+    // Total: 2 buildings scheduled
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
-    EXPECT_GT(totalScheduledBuildings, 0);
-    // Verify employees are assigned
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
+    EXPECT_EQ(2, totalScheduledBuildings);
 }
 
 
@@ -283,19 +323,25 @@ TEST_F(SchedulerTest, lessThanWorkDayBuildings) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // Verify that buildings were scheduled (with limited employee availability, not all may be scheduled)
+    // With limited employee availability, 2 two-story buildings scheduled on Monday
+    EXPECT_EQ(2, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({6, 7}), schedule[0][0].second);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({2, 4}), schedule[0][1].second);
+    
+    // Other days should be empty (commercial building can't be scheduled with limited resources)
+    EXPECT_EQ(0, schedule[1].size());
+    EXPECT_EQ(0, schedule[2].size());
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
+    // Total: 2 buildings scheduled
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
-    EXPECT_GT(totalScheduledBuildings, 0);
-    EXPECT_LE(totalScheduledBuildings, 3);
-    // Verify employees are assigned to each building
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
+    EXPECT_EQ(2, totalScheduledBuildings);
 }
 
 TEST_F(SchedulerTest, buildingsMoreThanCanHandle) {
@@ -349,20 +395,40 @@ TEST_F(SchedulerTest, buildingsMoreThanCanHandle) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // With many buildings and limited employees, some should be scheduled
+    // Verify specific schedule with limited employees
+    // Monday: 3 buildings
+    EXPECT_EQ(3, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ("Build 3", schedule[0][2].first);
+    
+    // Tuesday: 1 building
+    EXPECT_EQ(1, schedule[1].size());
+    EXPECT_EQ("Build 5", schedule[1][0].first);
+    
+    // Wednesday: 3 buildings
+    EXPECT_EQ(3, schedule[2].size());
+    EXPECT_EQ("Build 6", schedule[2][0].first);
+    EXPECT_EQ("Build 8", schedule[2][1].first);
+    EXPECT_EQ("Build 9", schedule[2][2].first);
+    
+    // Thursday: 1 building
+    EXPECT_EQ(1, schedule[3].size());
+    EXPECT_EQ("Build 11", schedule[3][0].first);
+    
+    // Friday: 3 buildings
+    EXPECT_EQ(3, schedule[4].size());
+    EXPECT_EQ("Build 12", schedule[4][0].first);
+    EXPECT_EQ("Build 14", schedule[4][1].first);
+    EXPECT_EQ("Build 15", schedule[4][2].first);
+    
+    // Total: 11 buildings scheduled out of 24
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
-    EXPECT_GT(totalScheduledBuildings, 0);
-    // Not all buildings can be scheduled (24 buildings, limited employees)
+    EXPECT_EQ(11, totalScheduledBuildings);
     EXPECT_LT(totalScheduledBuildings, 24);
-    // Verify employees are assigned
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
 }
 
 TEST_F(SchedulerTest, randomSchedulerUpdateAvail) {
@@ -400,18 +466,38 @@ TEST_F(SchedulerTest, randomSchedulerUpdateAvail) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // Some buildings should still be scheduled after removing one employee
-    int totalScheduledBuildings = 0;
-    for (int day = 0; day < 5; day++) {
-        totalScheduledBuildings += schedule[day].size();
-    }
-    EXPECT_GT(totalScheduledBuildings, 0);
+    // Monday: 2 buildings
+    EXPECT_EQ(2, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({2, 7}), schedule[0][0].second);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({1, 5}), schedule[0][1].second);
+    
+    // Tuesday: 2 buildings
+    EXPECT_EQ(2, schedule[1].size());
+    EXPECT_EQ("Build 3", schedule[1][0].first);
+    EXPECT_EQ(std::vector<int>({6}), schedule[1][0].second);
+    EXPECT_EQ("Build 4", schedule[1][1].first);
+    EXPECT_EQ(std::vector<int>({2}), schedule[1][1].second);
+    
+    // Other days should be empty
+    EXPECT_EQ(0, schedule[2].size());
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
     // Verify employee 8 is not in any schedule
     for (int day = 0; day < 5; day++) {
         for (const auto& [building, employees] : schedule[day]) {
             EXPECT_EQ(std::find(employees.begin(), employees.end(), 8), employees.end());
         }
     }
+    
+    // Total: 4 buildings scheduled
+    int totalScheduledBuildings = 0;
+    for (int day = 0; day < 5; day++) {
+        totalScheduledBuildings += schedule[day].size();
+    }
+    EXPECT_EQ(4, totalScheduledBuildings);
 }
 
 
@@ -451,18 +537,36 @@ TEST_F(SchedulerTest, randomSchedulerUpdateAvailAndRevertUpdate) {
     scheduler.printSchedule();
     
     auto schedule = scheduler.getSchedule();
-    // All buildings should be scheduled with employee 8 reverted to available
+    // Same as randomSchedule since employee 8 was reverted
+    // Monday: 2 buildings
+    EXPECT_EQ(2, schedule[0].size());
+    EXPECT_EQ("Build 0", schedule[0][0].first);
+    EXPECT_EQ(std::vector<int>({2, 8}), schedule[0][0].second);
+    EXPECT_EQ("Build 2", schedule[0][1].first);
+    EXPECT_EQ(std::vector<int>({1, 7}), schedule[0][1].second);
+    
+    // Tuesday: 2 buildings
+    EXPECT_EQ(2, schedule[1].size());
+    EXPECT_EQ("Build 1", schedule[1][0].first);
+    EXPECT_EQ(std::vector<int>({6, 2, 10, 3, 8, 7, 5, 4}), schedule[1][0].second);
+    EXPECT_EQ("Build 3", schedule[1][1].first);
+    EXPECT_EQ(std::vector<int>({1}), schedule[1][1].second);
+    
+    // Wednesday: 1 building
+    EXPECT_EQ(1, schedule[2].size());
+    EXPECT_EQ("Build 4", schedule[2][0].first);
+    EXPECT_EQ(std::vector<int>({6}), schedule[2][0].second);
+    
+    // Thursday and Friday should be empty
+    EXPECT_EQ(0, schedule[3].size());
+    EXPECT_EQ(0, schedule[4].size());
+    
+    // Total: 5 buildings scheduled
     int totalScheduledBuildings = 0;
     for (int day = 0; day < 5; day++) {
         totalScheduledBuildings += schedule[day].size();
     }
     EXPECT_EQ(5, totalScheduledBuildings);
-    // Verify employees are assigned
-    for (int day = 0; day < 5; day++) {
-        for (const auto& [building, employees] : schedule[day]) {
-            EXPECT_GT(employees.size(), 0);
-        }
-    }
 }
 
 TEST_F(SchedulerTest, randomSchedulerStrike) {
