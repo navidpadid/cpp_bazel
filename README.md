@@ -1,5 +1,8 @@
 # Schedule dynamic employees for some buildings for the upcoming week
 
+[![CI](https://img.shields.io/github/actions/workflow/status/navidpadid/cpp_bazel/ci.yml?branch=main&style=for-the-badge&logo=github&logoColor=white&label=Build)](https://github.com/navidpadid/cpp_bazel/actions/workflows/ci.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/navidpadid/cpp_bazel?style=for-the-badge&logo=git&logoColor=white)](https://github.com/navidpadid/cpp_bazel/commits/main)
+
 
 
 ## Running the code and the output
@@ -10,7 +13,7 @@ Pre-requisite and tested machine:
 
 
 ## To run the code:
-First open in devcontainer, then run:
+First open in devcontainer, thwhat en run:
 ```bash
 bazel build //...
 bazel test //... 
