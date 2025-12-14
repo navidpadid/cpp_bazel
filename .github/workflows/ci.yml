@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install Bazel
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/bazel-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt-get update
+        sudo apt-get install -y bazel
+    
+    - name: Build with Bazel
+      run: bazel build //...
+
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install Bazel
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/bazel-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt-get update
+        sudo apt-get install -y bazel
+    
+    - name: Run tests
+      run: bazel test //... --test_output=errors
+    
+    - name: Verify all tests passed
+      run: |
+        echo "All tests passed successfully!"
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-24.04
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install Bazel
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/bazel-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt-get update
+        sudo apt-get install -y bazel
+    
+    - name: Install lcov for coverage reporting
+      run: sudo apt-get install -y lcov
+    
+    - name: Generate coverage report
+      run: |
+        bazel coverage --combined_report=lcov //src:scheduler_test
+        genhtml bazel-out/_coverage/_coverage_report.dat --output-directory coverage_html
+    
+    - name: Check coverage threshold
+      run: |
+        coverage_pct=$(lcov --summary bazel-out/_coverage/_coverage_report.dat 2>&1 | grep "lines" | grep -oP '\d+\.\d+(?=%)')
+        echo "Coverage: $coverage_pct%"
+        if (( $(echo "$coverage_pct < 80.0" | bc -l) )); then
+          echo "ERROR: Coverage $coverage_pct% is below 80% threshold"
+          exit 1
+        fi
+        echo "Coverage check passed: $coverage_pct%"
+    
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-report
+        path: coverage_html/
+        retention-days: 30
